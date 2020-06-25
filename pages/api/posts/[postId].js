@@ -1,7 +1,7 @@
 import db from '../../../db'
 import { sleep } from '../../../utils'
 
-const failureRate = 0.5
+const failureRate = 0
 
 export default async (req, res) => {
   await sleep(500)
@@ -26,7 +26,7 @@ async function GET(req, res) {
     query: { postId },
   } = req
 
-  const row = db.posts.find((d) => d.id === postId)
+  const row = (await db.get()).posts.find((d) => d.id == postId)
 
   if (!row) {
     res.status(404)
@@ -42,13 +42,13 @@ async function PATCH(req, res) {
     body,
   } = req
 
-  if (Math.random() > failureRate) {
+  if (Math.random() < failureRate) {
     res.status(500)
     res.json({ message: 'An unknown error occurred!' })
     return
   }
 
-  const row = db.posts.find((d) => d.id === postId)
+  const row = (await db.get()).posts.find((d) => d.id == postId)
 
   if (!row) {
     res.status(404)
@@ -62,7 +62,12 @@ async function PATCH(req, res) {
     ...body,
   }
 
-  db.posts = db.posts.map((d) => (d.id === postId ? newRow : d))
+  await db.set((old) => {
+    return {
+      ...old,
+      posts: old.posts.map((d) => (d.id == postId ? newRow : d)),
+    }
+  })
 
   res.json(newRow)
 }
@@ -72,20 +77,25 @@ async function DELETE(req, res) {
     query: { postId },
   } = req
 
-  if (Math.random() > failureRate) {
+  if (Math.random() < failureRate) {
     res.status(500)
     res.json({ message: 'An unknown error occurred!' })
     return
   }
 
-  const row = db.posts.find((d) => d.id === postId)
+  const row = (await db.get()).posts.find((d) => d.id == postId)
 
   if (!row) {
     res.status(404)
     return res.send('Not found')
   }
 
-  db.posts = db.posts.filter((d) => d.id !== postId)
+  await db.set((old) => {
+    return {
+      ...old,
+      posts: old.posts.filter((d) => d.id != postId),
+    }
+  })
 
   res.status(200)
   res.send('Resource Deleted')

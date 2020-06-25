@@ -26,9 +26,9 @@ async function GET(req, res) {
     query: { pageOffset, pageSize },
   } = req
 
-  const posts = db.posts.map((d) => ({
+  const posts = (await db.get()).posts.map((d) => ({
     ...d,
-    content: undefined, // Don't return content in list calls
+    body: d.body.substring(0, 50) + (d.body.length > 100 ? '...' : ''), // Don't return full body in list calls
   }))
 
   if (Number(pageSize)) {
@@ -46,7 +46,7 @@ async function GET(req, res) {
 }
 
 async function POST(req, res) {
-  if (Math.random() > failureRate) {
+  if (Math.random() < failureRate) {
     res.status(500)
     res.json({ message: 'An unknown error occurred!' })
     return
@@ -57,7 +57,12 @@ async function POST(req, res) {
     ...req.body,
   }
 
-  db.posts.push(row)
+  await db.set((old) => {
+    return {
+      ...old,
+      posts: [...old.posts, row],
+    }
+  })
 
   res.json(row)
 }

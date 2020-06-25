@@ -6,20 +6,22 @@ export default function useCreatePost() {
     (values) => axios.post('/api/posts', values).then((res) => res.data),
     {
       onMutate: (values) => {
-        const previousPosts = queryCache.getQueryData('posts')
+        const oldPosts = queryCache.getQueryData('posts')
 
-        queryCache.setQueryData('posts', (old) => [
-          ...old,
-          {
-            id: 'temp',
-            ...values,
-          },
-        ])
+        queryCache.setQueryData('posts', (old) => {
+          return [
+            ...old,
+            {
+              ...values,
+              id: Date.now(),
+            },
+          ]
+        })
 
-        return () => queryCache.setQueryData('posts', previousPosts)
+        return () => queryCache.setQueryData('posts', oldPosts)
       },
       onError: (error, values, rollback) => rollback(),
-      onSuccess: () => queryCache.refetchQueries('posts'),
+      onSuccess: () => queryCache.invalidateQueries('posts'),
     }
   )
 }

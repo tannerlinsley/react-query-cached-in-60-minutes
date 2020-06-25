@@ -2,7 +2,7 @@ import React from 'react'
 
 const defaultFormValues = {
   title: '',
-  content: '',
+  body: '',
 }
 
 export default function PostForm({
@@ -38,14 +38,15 @@ export default function PostForm({
         />
       </div>
       <br />
-      <label htmlFor="content">Content</label>
+      <label htmlFor="body">body</label>
       <div>
         <textarea
           type="text"
-          name="content"
-          value={values.content}
-          onChange={(e) => setValue('content', e.target.value)}
+          name="body"
+          value={values.body}
+          onChange={(e) => setValue('body', e.target.value)}
           required
+          rows="10"
         />
       </div>
       <br />
