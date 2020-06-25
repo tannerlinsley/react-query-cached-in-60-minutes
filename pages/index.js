@@ -1,10 +1,12 @@
 import React from 'react'
+import { queryCache } from 'react-query'
 
 import { Wrapper, Sidebar, Main } from '../components/styled'
 import PostForm from '../components/PostForm'
 
 import usePosts from '../hooks/usePosts'
-import usePost from '../hooks/usePost'
+import useInfinitePosts from '../hooks/useInfinitePosts'
+import usePost, { fetchPost } from '../hooks/usePost'
 import useCreatePost from '../hooks/useCreatePost'
 import useSavePost from '../hooks/useSavePost'
 import useDeletePost from '../hooks/useDeletePost'
@@ -33,7 +35,16 @@ function App() {
 }
 
 function Posts({ setActivePostId }) {
-  const { status, data: posts, error, isFetching } = usePosts()
+  const {
+    status,
+    data: postPages,
+    error,
+    isFetching,
+    isFetchingMore,
+    canFetchMore,
+    fetchMore,
+  } = useInfinitePosts()
+
   const [createPost, { status: createPostStatus }] = useCreatePost()
 
   return (
@@ -46,16 +57,47 @@ function Posts({ setActivePostId }) {
             <span>Error: {error.message}</span>
           ) : (
             <>
-              <h3>Posts {isFetching ? <small>Updating...</small> : null}</h3>
+              <h3>
+                Posts{' '}
+                {isFetching && !isFetchingMore ? (
+                  <small>Updating...</small>
+                ) : null}
+              </h3>
               <div>
-                {posts.map((post) => (
-                  <div key={post.id}>
-                    <a href="#" onClick={() => setActivePostId(post.id)}>
-                      {post.title}
-                    </a>
-                  </div>
+                {postPages.map((page, index) => (
+                  <React.Fragment key={index}>
+                    {page.items.map((post) => (
+                      <div key={post.id}>
+                        <a
+                          href="#"
+                          onClick={() => setActivePostId(post.id)}
+                          onMouseEnter={() => {
+                            if (!queryCache.getQuery(['post', post.id])) {
+                              queryCache.prefetchQuery(
+                                ['post', post.id],
+                                fetchPost,
+                                {
+                                  staleTime: 1000 * 60,
+                                }
+                              )
+                            }
+                          }}
+                        >
+                          {post.title}
+                        </a>
+                      </div>
+                    ))}
+                  </React.Fragment>
                 ))}
               </div>
+              <br />
+              <button onClick={() => fetchMore()} disabled={!canFetchMore}>
+                {isFetchingMore
+                  ? 'Loading more...'
+                  : canFetchMore
+                  ? 'Load More'
+                  : 'Nothing more to load'}
+              </button>
             </>
           )}
         </div>
