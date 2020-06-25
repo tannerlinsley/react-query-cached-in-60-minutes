@@ -9,6 +9,7 @@ export default function PostForm({
   onSubmit,
   initialValues = defaultFormValues,
   submitText,
+  clearOnSubmit,
 }) {
   const [values, setValues] = React.useState(initialValues)
 
@@ -16,7 +17,9 @@ export default function PostForm({
     setValues((old) => ({ ...old, [field]: value }))
 
   const handleSubmit = (e) => {
-    setValues(defaultFormValues)
+    if (clearOnSubmit) {
+      setValues(defaultFormValues)
+    }
     e.preventDefault()
     onSubmit(values)
   }

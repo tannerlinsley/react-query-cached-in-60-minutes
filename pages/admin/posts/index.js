@@ -42,6 +42,7 @@ export default function Posts() {
         <div>
           <PostForm
             onSubmit={createPost}
+            clearOnSubmit
             submitText={
               createPostInfo.isLoading
                 ? 'Saving...'
