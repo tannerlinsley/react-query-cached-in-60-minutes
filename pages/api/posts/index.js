@@ -6,7 +6,7 @@ import { sleep } from '../../../utils'
 const failureRate = 0
 
 export default async (req, res) => {
-  await sleep(1000)
+  await sleep(2000)
 
   try {
     if (req.method === 'GET') {

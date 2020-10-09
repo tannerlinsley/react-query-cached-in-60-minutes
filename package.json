@@ -8,15 +8,15 @@
     "start": "next start"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.20.0",
     "fs-extra": "^9.0.1",
-    "next": "9.3.4",
+    "next": "9.5.4",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-query": "^2.4.0",
-    "react-query-devtools": "^2.1.0",
+    "react-query": "^2.23.1",
+    "react-query-devtools": "^2.5.1",
     "shortid": "^2.2.15",
-    "styled-components": "^5.1.0",
+    "styled-components": "^5.2.0",
     "styled-normalize": "^8.0.7"
   },
   "devDependencies": {
