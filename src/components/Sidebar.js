@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from 'next/link'
+import { Link } from 'react-router-dom'
 
 import { SidebarStyles } from './styled'
 
@@ -8,18 +8,18 @@ export default function Sidebar() {
     <SidebarStyles>
       <ul>
         <li>
-          <Link href="/">
+          <Link to="/">
             <a>Home</a>
           </Link>
         </li>
         <li>
-          <Link href="/blog">
+          <Link to="/blog">
             <a>Blog</a>
           </Link>
         </li>
         <hr />
         <li>
-          <Link href="/admin/posts">
+          <Link to="/admin">
             <a>Admin</a>
           </Link>
         </li>

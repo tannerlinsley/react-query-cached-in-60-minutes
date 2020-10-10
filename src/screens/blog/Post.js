@@ -1,18 +1,14 @@
 import React from 'react'
+import { useParams } from 'react-router-dom'
 
 //
 
 import usePost from '../../hooks/usePost'
 
-export const getServerSideProps = ({ params }) => {
-  return {
-    props: {
-      postId: params.postId,
-    },
-  }
-}
+import { Loader } from '../../components/styled'
 
-export default function Post({ postId }) {
+export default function Post() {
+  const { postId } = useParams()
   const postQuery = usePost(postId)
 
   return (
@@ -24,8 +20,7 @@ export default function Post({ postId }) {
       ) : (
         <div>
           <h2>
-            {postQuery.data.title}{' '}
-            {postQuery.isFetching ? <small>...</small> : null}
+            {postQuery.data.title} {postQuery.isFetching ? <Loader /> : null}
           </h2>
           <p>{postQuery.data.body}</p>
         </div>

@@ -2,12 +2,6 @@ import React from 'react'
 import App from 'next/app'
 import { createGlobalStyle } from 'styled-components'
 import normalize from 'styled-normalize'
-import { ReactQueryDevtools } from 'react-query-devtools'
-
-//
-
-import { Wrapper, Main } from '../components/styled'
-import Sidebar from '../components/Sidebar'
 
 //
 
@@ -41,16 +35,11 @@ const GlobalStyles = createGlobalStyle`
 export default class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props
-
     return (
-      <Wrapper>
+      <>
         <GlobalStyles />
-        <Sidebar />
-        <Main>
-          <Component {...pageProps} />
-        </Main>
-        <ReactQueryDevtools />
-      </Wrapper>
+        <Component {...pageProps} />
+      </>
     )
   }
 }

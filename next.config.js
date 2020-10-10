@@ -30,6 +30,19 @@ Module.prototype.require = function (modulePath) {
 }
 
 module.exports = {
+  target: 'serverless',
+  async rewrites() {
+    return [
+      {
+        source: '/api/:any*',
+        destination: '/api/:any*',
+      },
+      {
+        source: '/:any*',
+        destination: '/',
+      },
+    ]
+  },
   webpack: (config) => {
     config.resolve = {
       ...config.resolve,

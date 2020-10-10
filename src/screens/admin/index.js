@@ -1,10 +1,11 @@
 import React from 'react'
-import Link from 'next/link'
+import { Link } from 'react-router-dom'
 
-import PostForm from '../../../components/PostForm'
+import PostForm from '../../components/PostForm'
+import { Loader } from '../../components/styled'
 
-import usePosts from '../../../hooks/usePosts'
-import useCreatePost from '../../../hooks/useCreatePost'
+import usePosts from '../../hooks/usePosts'
+import useCreatePost from '../../hooks/useCreatePost'
 
 export default function Posts() {
   const postsQuery = usePosts()
@@ -15,17 +16,16 @@ export default function Posts() {
       <div>
         <div>
           {postsQuery.isLoading ? (
-            <span>Loading...</span>
+            <span>
+              <Loader /> Loading
+            </span>
           ) : (
             <>
-              <h3>Posts {postsQuery.isFetching ? <small>...</small> : null}</h3>
+              <h3>Posts {postsQuery.isFetching ? <Loader /> : null}</h3>
               <ul>
                 {postsQuery.data.map((post) => (
                   <li key={post.id}>
-                    <Link
-                      href="/admin/posts/[postId]"
-                      as={`/admin/posts/${post.id}`}
-                    >
+                    <Link to={`./${post.id}`}>
                       <a>{post.title}</a>
                     </Link>
                   </li>

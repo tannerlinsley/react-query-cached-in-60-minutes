@@ -1,10 +1,10 @@
 import db from '../../../db'
 import { sleep } from '../../../utils'
 
-const failureRate = 0
+const deleteFailureRate = 0
 
 export default async (req, res) => {
-  await sleep(2000)
+  await sleep(1000)
 
   try {
     if (req.method === 'GET') {
@@ -42,7 +42,7 @@ async function PATCH(req, res) {
     body,
   } = req
 
-  if (Math.random() < failureRate) {
+  if (body.body.includes('fail')) {
     res.status(500)
     res.json({ message: 'An unknown error occurred!' })
     return
@@ -77,7 +77,7 @@ async function DELETE(req, res) {
     query: { postId },
   } = req
 
-  if (Math.random() < failureRate) {
+  if (Math.random() < deleteFailureRate) {
     res.status(500)
     res.json({ message: 'An unknown error occurred!' })
     return

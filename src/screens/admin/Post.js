@@ -1,47 +1,41 @@
 import React from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 
 //
 
-import PostForm from '../../../components/PostForm'
+import usePost from '../../hooks/usePost'
+import useSavePost from '../../hooks/useSavePost'
+import useDeletePost from '../../hooks/useDeletePost'
 
-import usePost from '../../../hooks/usePost'
-import useSavePost from '../../../hooks/useSavePost'
-import useDeletePost from '../../../hooks/useDeletePost'
+import PostForm from '../../components/PostForm'
+import { Loader } from '../../components/styled'
 
-export const getServerSideProps = ({ params }) => {
-  return {
-    props: {
-      postId: params.postId,
-    },
-  }
-}
+export default function Post() {
+  const { postId } = useParams()
+  const navigate = useNavigate()
 
-export default function Post({ postId }) {
-  const router = useRouter()
   const postQuery = usePost(postId)
   const [savePost, savePostInfo] = useSavePost()
   const [deletePost] = useDeletePost()
 
   const onDelete = async () => {
-    deletePost(postId)
-    router.push('/admin/posts')
+    await deletePost(postId)
+    navigate('/admin')
   }
 
   return (
     <>
       {postQuery.isLoading ? (
-        <span>Loading...</span>
+        <span>
+          <Loader /> Loading...
+        </span>
       ) : (
         <div>
           <h3>
-            <Link href="/blog/[postId]" as={`/blog/${postQuery.data.id}`}>
-              <a>{postQuery.data.title}</a>
-            </Link>
+            {postQuery.data.title} {postQuery.isFetching ? <Loader /> : null}
           </h3>
           <p>
-            <small>Post ID: {postQuery.data.id}</small>
+            <Link to={`/blog/${postQuery.data.id}`}>View Post</Link>
           </p>
           <PostForm
             initialValues={postQuery.data}
