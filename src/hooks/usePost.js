@@ -7,7 +7,9 @@ export const fetchPost = (_, postId) =>
 export default function usePost(postId) {
   return useQuery(['posts', postId], fetchPost, {
     initialData: () =>
+      console.log('hello', queryCache.getQueryData('posts')) ||
       queryCache.getQueryData('posts')?.find((d) => d.id == postId),
     initialStale: true,
+    staleTime: 2000,
   })
 }

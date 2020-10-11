@@ -5,14 +5,14 @@ import { queryCache } from 'react-query'
 import usePosts from '../../hooks/usePosts'
 import { fetchPost } from '../../hooks/usePost'
 
-import { PostStyles, Loader } from '../../components/styled'
+import { PostStyles } from '../../components/styled'
 
 export default function Home() {
   const postsQuery = usePosts()
 
   return (
     <div>
-      <h1>Blog {postsQuery.isFetching ? <Loader /> : null}</h1>
+      <h1>Blog</h1>
 
       <div
         css={`
@@ -30,13 +30,20 @@ export default function Home() {
             <PostStyles
               as={Link}
               to={`./${post.id}`}
+              disabled={post.isTemp}
               key={post.id}
               onMouseEnter={() => {
-                if (!queryCache.getQuery(['posts', post.id])) {
-                  queryCache.prefetchQuery(['posts', post.id], fetchPost, {
-                    staleTime: 2000,
-                  })
+                if (!queryCache.getQueryData(['posts', String(post.id)])) {
+                  queryCache.setQueryData(['posts', String(post.id)], post)
+                  queryCache.invalidateQueries(['posts', String(post.id)])
                 }
+                queryCache.prefetchQuery(
+                  ['posts', String(post.id)],
+                  fetchPost,
+                  {
+                    staleTime: 5000,
+                  }
+                )
               }}
             >
               <h3>{post.title}</h3>

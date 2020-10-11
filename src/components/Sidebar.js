@@ -8,20 +8,14 @@ export default function Sidebar() {
     <SidebarStyles>
       <ul>
         <li>
-          <Link to="/">
-            <a>Home</a>
-          </Link>
+          <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/blog">
-            <a>Blog</a>
-          </Link>
+          <Link to="/blog">Blog</Link>
         </li>
         <hr />
         <li>
-          <Link to="/admin">
-            <a>Admin</a>
-          </Link>
+          <Link to="/admin">Admin</Link>
         </li>
       </ul>
     </SidebarStyles>

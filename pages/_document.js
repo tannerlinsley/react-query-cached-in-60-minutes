@@ -40,7 +40,7 @@ export default class MyDocument extends Document {
           />
         </Head>
         <body>
-          <Main />
+          <Main suppresHydrationWarning />
           <NextScript />
         </body>
       </Html>

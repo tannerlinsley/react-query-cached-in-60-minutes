@@ -6,6 +6,8 @@ export default function useCreatePost() {
     (values) => axios.post('/api/posts', values).then((res) => res.data),
     {
       onMutate: (values) => {
+        queryCache.cancelQueries('posts')
+
         const oldPosts = queryCache.getQueryData('posts')
 
         queryCache.setQueryData('posts', (old) => {
@@ -14,6 +16,7 @@ export default function useCreatePost() {
             {
               ...values,
               id: Date.now(),
+              isTemp: true,
             },
           ]
         })

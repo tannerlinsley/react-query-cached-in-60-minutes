@@ -31,9 +31,7 @@ export default function Post() {
         </span>
       ) : (
         <div>
-          <h3>
-            {postQuery.data.title} {postQuery.isFetching ? <Loader /> : null}
-          </h3>
+          <h3>{postQuery.data.title}</h3>
           <p>
             <Link to={`/blog/${postQuery.data.id}`}>View Post</Link>
           </p>

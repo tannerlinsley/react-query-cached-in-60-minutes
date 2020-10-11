@@ -1,10 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { queryCache } from 'react-query'
 
 import PostForm from '../../components/PostForm'
 import { Loader } from '../../components/styled'
 
 import usePosts from '../../hooks/usePosts'
+import { fetchPost } from '../../hooks/usePost'
 import useCreatePost from '../../hooks/useCreatePost'
 
 export default function Posts() {
@@ -21,12 +23,35 @@ export default function Posts() {
             </span>
           ) : (
             <>
-              <h3>Posts {postsQuery.isFetching ? <Loader /> : null}</h3>
+              <h3>Posts</h3>
               <ul>
                 {postsQuery.data.map((post) => (
                   <li key={post.id}>
-                    <Link to={`./${post.id}`}>
-                      <a>{post.title}</a>
+                    <Link
+                      to={`./${post.id}`}
+                      onMouseEnter={() => {
+                        if (
+                          !queryCache.getQueryData(['posts', String(post.id)])
+                        ) {
+                          queryCache.setQueryData(
+                            ['posts', String(post.id)],
+                            post
+                          )
+                          queryCache.invalidateQueries([
+                            'posts',
+                            String(post.id),
+                          ])
+                        }
+                        queryCache.prefetchQuery(
+                          ['posts', String(post.id)],
+                          fetchPost,
+                          {
+                            staleTime: 5000,
+                          }
+                        )
+                      }}
+                    >
+                      {post.title}
                     </Link>
                   </li>
                 ))}
