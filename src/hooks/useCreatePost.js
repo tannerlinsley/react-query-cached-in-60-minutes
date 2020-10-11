@@ -1,30 +1,20 @@
+import React from 'react'
 import axios from 'axios'
-import { useMutation, queryCache } from 'react-query'
 
 export default function useCreatePost() {
-  return useMutation(
-    (values) => axios.post('/api/posts', values).then((res) => res.data),
-    {
-      onMutate: (values) => {
-        queryCache.cancelQueries('posts')
+  const [state, setState] = React.useReducer((_, action) => action, {
+    isIdle: true,
+  })
 
-        const oldPosts = queryCache.getQueryData('posts')
-
-        queryCache.setQueryData('posts', (old) => {
-          return [
-            ...old,
-            {
-              ...values,
-              id: Date.now(),
-              isTemp: true,
-            },
-          ]
-        })
-
-        return () => queryCache.setQueryData('posts', oldPosts)
-      },
-      onError: (error, values, rollback) => rollback(),
-      onSuccess: () => queryCache.invalidateQueries('posts'),
+  const mutate = React.useCallback(async (values) => {
+    setState({ isLoading: true })
+    try {
+      const data = axios.post('/api/posts', values).then((res) => res.data)
+      setState({ isSuccess: true, data })
+    } catch (error) {
+      setState({ isError: true, error })
     }
-  )
+  }, [])
+
+  return [mutate, state]
 }

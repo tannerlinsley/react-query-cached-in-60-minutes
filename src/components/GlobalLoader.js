@@ -1,10 +1,7 @@
 import React from 'react'
-import { useIsFetching } from 'react-query'
 import { Loader } from './styled'
 
 export default function GlobalLoader() {
-  const isFetching = useIsFetching()
-
   return (
     <Loader
       css={`
@@ -15,7 +12,7 @@ export default function GlobalLoader() {
         transition: 0.3s ease;
       `}
       style={{
-        opacity: isFetching ? 1 : 0,
+        opacity: 1,
       }}
     />
   )
