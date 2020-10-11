@@ -1,10 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { queryCache } from 'react-query'
-
+//
 import usePosts from '../../hooks/usePosts'
-import { fetchPost } from '../../hooks/usePost'
-
 import { PostStyles } from '../../components/styled'
 
 export default function Home() {
@@ -27,25 +24,7 @@ export default function Home() {
           postsQuery.error.message
         ) : (
           postsQuery.data.map((post) => (
-            <PostStyles
-              as={Link}
-              to={`./${post.id}`}
-              disabled={post.isTemp}
-              key={post.id}
-              onMouseEnter={() => {
-                if (!queryCache.getQueryData(['posts', String(post.id)])) {
-                  queryCache.setQueryData(['posts', String(post.id)], post)
-                  queryCache.invalidateQueries(['posts', String(post.id)])
-                }
-                queryCache.prefetchQuery(
-                  ['posts', String(post.id)],
-                  fetchPost,
-                  {
-                    staleTime: 5000,
-                  }
-                )
-              }}
-            >
+            <PostStyles as={Link} to={`./${post.id}`} key={post.id}>
               <h3>{post.title}</h3>
               <p>{post.body}</p>
             </PostStyles>

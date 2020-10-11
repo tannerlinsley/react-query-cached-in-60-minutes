@@ -1,17 +1,20 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { queryCache } from 'react-query'
 
 import PostForm from '../../components/PostForm'
 import { Loader } from '../../components/styled'
 
 import usePosts from '../../hooks/usePosts'
-import { fetchPost } from '../../hooks/usePost'
 import useCreatePost from '../../hooks/useCreatePost'
 
 export default function Posts() {
   const postsQuery = usePosts()
   const [createPost, createPostInfo] = useCreatePost()
+
+  const onSubmit = async (values) => {
+    await createPost(values)
+    postsQuery.fetch()
+  }
 
   return (
     <section>
@@ -27,32 +30,7 @@ export default function Posts() {
               <ul>
                 {postsQuery.data.map((post) => (
                   <li key={post.id}>
-                    <Link
-                      to={`./${post.id}`}
-                      onMouseEnter={() => {
-                        if (
-                          !queryCache.getQueryData(['posts', String(post.id)])
-                        ) {
-                          queryCache.setQueryData(
-                            ['posts', String(post.id)],
-                            post
-                          )
-                          queryCache.invalidateQueries([
-                            'posts',
-                            String(post.id),
-                          ])
-                        }
-                        queryCache.prefetchQuery(
-                          ['posts', String(post.id)],
-                          fetchPost,
-                          {
-                            staleTime: 5000,
-                          }
-                        )
-                      }}
-                    >
-                      {post.title}
-                    </Link>
+                    <Link to={`./${post.id}`}>{post.title}</Link>
                   </li>
                 ))}
               </ul>
@@ -66,7 +44,7 @@ export default function Posts() {
         <h3>Create New Post</h3>
         <div>
           <PostForm
-            onSubmit={createPost}
+            onSubmit={onSubmit}
             clearOnSubmit
             submitText={
               createPostInfo.isLoading

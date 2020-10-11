@@ -16,7 +16,12 @@ export default function Post() {
 
   const postQuery = usePost(postId)
   const [savePost, savePostInfo] = useSavePost()
-  const [deletePost] = useDeletePost()
+  const [deletePost, deletePostInfo] = useDeletePost()
+
+  const onSubmit = async (values) => {
+    await savePost(values)
+    postQuery.fetch()
+  }
 
   const onDelete = async () => {
     await deletePost(postId)
@@ -37,7 +42,7 @@ export default function Post() {
           </p>
           <PostForm
             initialValues={postQuery.data}
-            onSubmit={savePost}
+            onSubmit={onSubmit}
             submitText={
               savePostInfo.isLoading
                 ? 'Saving...'
@@ -50,7 +55,15 @@ export default function Post() {
           />
 
           <p>
-            <button onClick={onDelete}>Delete Post</button>
+            <button onClick={onDelete}>
+              {deletePostInfo.isLoading
+                ? 'Deleting...'
+                : deletePostInfo.isError
+                ? 'Error!'
+                : deletePostInfo.isSuccess
+                ? 'Deleted!'
+                : 'Delete Post'}
+            </button>
           </p>
         </div>
       )}
